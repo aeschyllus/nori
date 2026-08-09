@@ -5,13 +5,15 @@ import (
 	"errors"
 	"path/filepath"
 	"testing"
+
+	"github.com/aeschyllus/nori/internal/database"
 )
 
 func newTestRepo(t *testing.T) *AccountRepository {
 	t.Helper()
-	db, err := InitDB(filepath.Join(t.TempDir(), "test.db"))
+	db, err := database.Open(filepath.Join(t.TempDir(), "test.db"))
 	if err != nil {
-		t.Fatalf("InitDB: %v", err)
+		t.Fatalf("database.Open: %v", err)
 	}
 	t.Cleanup(func() { _ = db.Close() })
 	return NewAccountRepository(db)

@@ -11,6 +11,7 @@ import (
 
 	"github.com/aeschyllus/nori/internal/account"
 	"github.com/aeschyllus/nori/internal/config"
+	"github.com/aeschyllus/nori/internal/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,7 +31,7 @@ func main() {
 	}
 
 	// Database
-	db, err := account.InitDB(cfg.DBPath)
+	db, err := database.Open(cfg.DBPath)
 	if err != nil {
 		slog.Error("could not initialize database", "error", err)
 		os.Exit(1)
@@ -40,6 +41,11 @@ func main() {
 			slog.Error("failed to close database", "error", err)
 		}
 	}()
+
+	if err := account.Migrate(db); err != nil {
+		slog.Error("could not migrate database", "error", err)
+		os.Exit(1)
+	}
 
 	if cfg.SeedDemo {
 		if err := account.SeedDemoData(db); err != nil {
