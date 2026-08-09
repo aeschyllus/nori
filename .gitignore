@@ -1,0 +1,7 @@
+# Local SQLite database
+/nori.db
+/nori.db-shm
+/nori.db-wal
+
+# Build output
+/bin/
