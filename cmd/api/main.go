@@ -42,7 +42,7 @@ func main() {
 		}
 	}()
 
-	if err := account.Migrate(db); err != nil {
+	if err := database.Migrate(db); err != nil {
 		slog.Error("could not migrate database", "error", err)
 		os.Exit(1)
 	}

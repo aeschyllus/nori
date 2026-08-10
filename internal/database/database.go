@@ -2,9 +2,11 @@ package database
 
 import (
 	"database/sql"
+	"embed"
 	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pressly/goose/v3"
 )
 
 const (
@@ -13,6 +15,9 @@ const (
 	maxOpenConns = 1
 	maxIdleConns = 1
 )
+
+//go:embed migrations/*.sql
+var migrationsFS embed.FS
 
 func Open(dbPath string) (*sql.DB, error) {
 	db, err := sql.Open(driverName, dbPath+dsnSuffix)
@@ -29,4 +34,28 @@ func Open(dbPath string) (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func Migrate(db *sql.DB) error {
+	return RunGoose(db, "up")
+}
+
+func RunGoose(db *sql.DB, command string) error {
+	goose.SetBaseFS(migrationsFS)
+	goose.SetDialect("sqlite3")
+
+	switch command {
+	case "up":
+		return goose.Up(db, "migrations")
+	case "down":
+		return goose.Down(db, "migrations")
+	case "reset":
+		return goose.Reset(db, "migrations")
+	case "status":
+		return goose.Status(db, "migrations")
+	case "version":
+		return goose.Version(db, "migrations")
+	default:
+		return fmt.Errorf("unknown migration command %q", command)
+	}
 }
