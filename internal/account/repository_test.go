@@ -16,6 +16,9 @@ func newTestRepo(t *testing.T) *AccountRepository {
 		t.Fatalf("database.Open: %v", err)
 	}
 	t.Cleanup(func() { _ = db.Close() })
+	if err := Migrate(db); err != nil {
+		t.Fatalf("Migrate: %v", err)
+	}
 	return NewAccountRepository(db)
 }
 
