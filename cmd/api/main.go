@@ -54,21 +54,9 @@ func main() {
 		}
 	}
 
-	// Dependencies
-	repo := account.NewAccountRepository(db)
-	svc := account.NewAccountService(repo)
-	h := account.NewAccountHandler(svc)
-
 	// Router
 	router := gin.Default()
-
-	accounts := router.Group("/accounts")
-	{
-		accounts.GET("/", h.ListAccounts)
-		accounts.GET("/:id", h.GetAccount)
-		accounts.POST("/", h.CreateAccount)
-		accounts.PUT("/:id", h.UpdateAccount)
-	}
+	account.RegisterRoutes(router, db)
 
 	// HTTP server
 	server := &http.Server{
