@@ -81,13 +81,12 @@ func (r *AccountRepository) Insert(ctx context.Context, account Account) (Accoun
 }
 
 func (r *AccountRepository) Update(ctx context.Context, account Account) (Account, error) {
-	var id int64
 	err := r.db.QueryRowContext(ctx, `
 		UPDATE accounts
 		SET name = ?, amount = ?
 		WHERE account_id = ?
 		RETURNING account_id
-	`, account.Name, account.Amount, account.ID).Scan(&id)
+	`, account.Name, account.Amount, account.ID).Scan(&account.ID)
 	if errors.Is(err, sql.ErrNoRows) {
 		return Account{}, fmt.Errorf("update account %d: %w", account.ID, ErrAccountNotFound)
 	}
