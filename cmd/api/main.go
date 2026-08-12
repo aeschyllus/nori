@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/aeschyllus/nori/internal/account"
+	"github.com/aeschyllus/nori/internal/category"
 	"github.com/aeschyllus/nori/internal/config"
 	"github.com/aeschyllus/nori/internal/database"
 	"github.com/gin-gonic/gin"
@@ -57,6 +58,7 @@ func main() {
 	// Router
 	router := gin.Default()
 	account.RegisterRoutes(router, db)
+	category.RegisterRoutes(router, db)
 
 	// HTTP server
 	server := &http.Server{
